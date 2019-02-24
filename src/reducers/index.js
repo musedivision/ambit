@@ -1,8 +1,8 @@
 import { combineReducers } from 'redux'
-import pixels from './pixels'
+import people from './people'
 
 const rootReducer = combineReducers({
-  pixels
+  people
 })
 
 export default rootReducer
