@@ -1,6 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import {compose, lifecycle} from 'recompose';
+import {connect} from 'react-redux';
+import R from 'ramda';
+
+import {getPeopleAction} from '../reducers/people';
 
 const CodeBlock = styled.pre`
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
@@ -12,21 +17,13 @@ const H2 = styled.h2`
   text-align: center;
 `;
 
-export function Table({...props}) {
+function Table(props) {
+  console.log('getPeople: ', props.getPeople);
   return (
     <div>
-      <H2>
-        Table
-      </H2>
+      <H2>Table</H2>
       <CodeBlock>
-        {`
-            {
-              {name: 'Jim', age: 30, gender: 'male', _id: 'b3Fshn8F976TZCTg'},
-              {name: 'Jane', age: 55, gender: 'female', _id: 'k3nEqkqlKmWZNejC'},
-              {name: 'Bob', age: 20, gender: 'male', _id: 'oqnu2ZnPTebp04bG'},
-              {name: 'Sally', age: 24, gender: 'female', _id: 'tKmv8RC6GlUnYcV3'})
-            }
-          `}
+        {` ${JSON.stringify(props.people, null, 2)} `}
       </CodeBlock>
     </div>
   );
@@ -36,4 +33,23 @@ Table.defaultProps = {};
 
 Table.propTypes = {};
 
-export default Table;
+const mapStateToProps = state => ({
+  people: state.people.people,
+});
+
+const mapDispatchToProps = dispatch => ({
+  getPeople: filter => dispatch(getPeopleAction(filter)),
+});
+
+export default compose(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
+  lifecycle({
+    componentWillMount() {
+      console.log('this.props: ', this.props);
+      this.props.getPeople('/everyone');
+    },
+  }),
+)(Table);

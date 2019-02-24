@@ -1,13 +1,19 @@
 var express = require('express');
+var cors = require('cors');
+
 var app = express();
+
 var Datastore = require('nedb'),
   db = new Datastore({
     filename: 'db.json',
     autoload: true,
   });
 
+app.use(cors());
+
 app.get(['/everyone', '/'], function(req, res) {
   db.find({}, {}, (err, docs) => {
+    console.log('docs: ', docs);
     res.status(200).json(docs);
   });
 });

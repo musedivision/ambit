@@ -4,11 +4,14 @@ const scopeAction = action => `people/${action}`;
 // actions
 const GET_PEOPLE = scopeAction('GET_PEOPLE');
 
-// action creators
-export const getPeopleAction = filter => ({
-  type: GET_PEOPLE,
-  filter,
-});
+// action creators thunks
+export const getPeopleAction = filter => async dispatch => {
+  const docs = await getPeople(filter);
+  dispatch({
+    type: GET_PEOPLE,
+    docs,
+  });
+};
 
 const initialState = {
   people: [],
@@ -16,8 +19,8 @@ const initialState = {
 
 const getPeople = async filter => {
   try {
-    const res = await fetch('https://localhost:6969/');
-    return res.docs;
+    const res = await fetch('http://localhost:6969/');
+    return await res.json();
   } catch (e) {
     console.log('e.message: ', e.message);
   }
@@ -26,12 +29,10 @@ const getPeople = async filter => {
 export default (state = initialState, action) => {
   switch (action.type) {
     case GET_PEOPLE:
-      getPeople(action.filter).then(docs => {
-        return {
-          ...state,
-          people: docs,
-        };
-      });
+      return {
+        ...state,
+        people: action.docs,
+      };
     default:
       return state;
   }

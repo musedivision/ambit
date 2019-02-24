@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import styled from 'styled-components';
 
-import {Table} from './Table';
+import Table from './Table';
 
 const Body = styled.div`
   margin: 0;
