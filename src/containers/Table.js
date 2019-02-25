@@ -3,39 +3,59 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import {compose, lifecycle} from 'recompose';
 import {connect} from 'react-redux';
-import R from 'ramda';
+import * as R from 'ramda';
+import ReactDataGrid from 'react-data-grid';
 
 import {getPeopleAction} from '../reducers/people';
-
-const CodeBlock = styled.pre`
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-  font-size: 12px;
-`;
+import Toolbar from './Toolbar';
 
 const H2 = styled.h2`
   text-align: center;
+  color: white;
 `;
 
+const Container = styled.div`
+  font-size: 16px;
+  width: 100%;
+  color: black;
+`;
+
+const cols = array =>
+  R.keys(array[0]).map(key => ({key: key, name: key.toUpperCase()}));
+
 function Table(props) {
-  console.log('getPeople: ', props.getPeople);
   return (
-    <div>
-      <H2>Table</H2>
-      <CodeBlock>
-        {` ${JSON.stringify(props.people, null, 2)} `}
-      </CodeBlock>
-    </div>
+    <Container>
+      <H2>People</H2>
+      <Toolbar />
+      <ReactDataGrid
+        columns={cols(props.people)}
+        rowGetter={i => props.people[i]}
+        rowsCount={10}
+        minHeight={200}
+      />
+    </Container>
   );
 }
 
-Table.defaultProps = {};
+Table.defaultProps = {
+  people: [],
+  filter: 'everyone',
+};
 
-Table.propTypes = {};
+Table.propTypes = {
+  //people: PropTypes.Array,
+  //active_filter: PropTypes.String,
+  //getPeople: Function,
+};
 
-const mapStateToProps = state => ({
-  people: state.people.people,
-});
+const mapStateToProps = state => 
+{
+  return ({
+    people: state.people.people,
+    filter: state.people.filter,
+  })
+}
 
 const mapDispatchToProps = dispatch => ({
   getPeople: filter => dispatch(getPeopleAction(filter)),
@@ -48,8 +68,7 @@ export default compose(
   ),
   lifecycle({
     componentWillMount() {
-      console.log('this.props: ', this.props);
-      this.props.getPeople('/everyone');
+      this.props.getPeople(this.props.filter);
     },
   }),
 )(Table);
