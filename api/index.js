@@ -1,5 +1,5 @@
 var express = require('express');
-var cors = require('cors');
+var fs = require('fs');
 
 var app = express();
 
@@ -9,9 +9,18 @@ var Datastore = require('nedb'),
     autoload: true,
   });
 
-app.use(cors());
+app.use(express.static('build'));
 
-app.get(['/everyone', '/'], function(req, res) {
+app.get('/', (req, res) => {
+  console.log('/ route ' );
+  fs.readFile('./build/index.html', 'utf8', (err, data) => {
+    res.contentType('text/html');
+    console.log('data: ', data);
+    res.status(200).send(data);
+  });
+});
+
+app.get('/everyone', function(req, res) {
   db.find({}, {}, (err, docs) => {
     console.log('docs: ', docs);
     res.status(200).json(docs);
@@ -46,7 +55,7 @@ app.get('/under30', function(req, res) {
   db.find(
     {
       age: {
-        $lt: 30
+        $lt: 30,
       },
     },
     {},
@@ -60,7 +69,7 @@ app.get('/over30', function(req, res) {
   db.find(
     {
       age: {
-        $gte: 30
+        $gte: 30,
       },
     },
     {},
@@ -70,8 +79,6 @@ app.get('/over30', function(req, res) {
   );
 });
 
-
-
-app.listen(6969, function() {
+app.listen(3000, function() {
   console.log('Example app listening on port 3000!');
 });

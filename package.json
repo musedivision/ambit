@@ -1,5 +1,5 @@
 {
-  "name": "practice_redux",
+  "name": "refactionjsfe",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -68,7 +68,11 @@
   "scripts": {
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
-    "test": "node scripts/test.js"
+    "test": "node scripts/test.js",
+    "docker-build": "docker build . -t musedivision/ambit_jsfe",
+    "docker-publish": "docker push musedivision/ambit_jsfe:latest",
+    "publish": "npm run build && npm run docker-build && npm run docker-publish",
+    "prod": "docker run --rm -it -p 3000:3000 --name=ambit musedivision/ambit_jsfe "
   },
   "eslintConfig": {
     "extends": "react-app"

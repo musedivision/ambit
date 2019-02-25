@@ -31,7 +31,7 @@ const initialState = {
 
 const getPeople = async filter => {
   try {
-    const res = await fetch(`http://localhost:6969/${filter}`);
+    const res = await fetch(`/${filter}`);
     return await res.json();
   } catch (e) {
     console.log('e.message: ', e.message);
